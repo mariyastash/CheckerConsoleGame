@@ -10,89 +10,92 @@ namespace B18_Gregory_317612950_Mariya_321373136
 		private int m_GameBoardSize;
 		private Piece[,] m_GameBoard;
         private ePieceValue m_PieceValue;
+        private dictPieces m_dictPieces;
 
-		////Methods:
-		public GameBoard(int i_BoardSize)
+        ////Methods:
+        public GameBoard(int i_BoardSize)
 		{
 			m_GameBoardSize = i_BoardSize;
+            m_dictPieces = new dictPieces();
 			InitializeNewGameBoard();
-		}
 
+        }
+
+        /**
+         * BoardSize  
+         **/
 		public int BoardSize
 		{
 			get { return m_GameBoardSize; }
 		}
 
+        private void initBoardPiecePosition()
+        {
+            for (int i = 0; i < m_GameBoardSize; i++)
+            {
+                for (int j = 0; j < m_GameBoardSize; j++)
+                {
+                    m_GameBoard[i, j] = new Piece(i, j);
+                }
+            }
+        }
+
+        private void initPlayerPiecesPosition(int i_StartRow, int i_EndRow, int i_BoardSize, ePieceValue i_PieceValue)
+        {
+
+            for (int i = i_StartRow; i < i_EndRow; i++)
+            {
+                if ((i % 2) == 0)
+                {
+                    for (int j = 1; j < i_BoardSize; j += 2)
+                    {
+                        m_GameBoard[i, j].PieceValue = i_PieceValue;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < i_BoardSize; j += 2)
+                    {
+                        m_GameBoard[i, j].PieceValue = i_PieceValue;
+                    }
+                }
+            }
+        }
+
 		public void InitializeNewGameBoard()
 		{
-			m_GameBoard = new Piece[m_GameBoardSize, m_GameBoardSize];
+            m_GameBoard = new Piece[m_GameBoardSize, m_GameBoardSize];
 
-			for (int i = 0; i < m_GameBoardSize; i++)
-			{
-				for (int j = 0; j < m_GameBoardSize; j++)
-				{
-					m_GameBoard[i, j] = new Piece(i, j);
-				}
-			}
+            initBoardPiecePosition();
 
-			////enemy
-			for (int i = 0; i < m_GameBoardSize / 2 - 1; i++)
-			{
-				if ((i % 2) == 0)
-				{
-					for (int j = 1; j < m_GameBoardSize; j += 2)
-					{
-						m_GameBoard[i, j].PieceValue = ePieceValue.X;
-					}
-				}
-				else
-				{
-					for (int j = 0; j < m_GameBoardSize; j += 2)
-					{
-						m_GameBoard[i, j].PieceValue = ePieceValue.X;
-					}
-				}
-			}
+            //First player's pieces postion - bottom player
+            initPlayerPiecesPosition(m_GameBoardSize / 2 + 1, m_GameBoardSize, m_GameBoardSize, ePieceValue.O);
 
-            ////first player
-            for (int i = m_GameBoardSize - 1; i > m_GameBoardSize / 2; i--)
-            {
-				if (i % 2 == 0)
-				{
-					for (int j = 1; j < m_GameBoardSize; j += 2)
-					{
-						m_GameBoard[i, j].PieceValue = ePieceValue.O;
-					}
-				}
-				else
-				{
-					for (int j = 0; j < m_GameBoardSize; j += 2)
-					{
-						m_GameBoard[i, j].PieceValue = ePieceValue.O;
-					}
-				}
-            }
-			drawBoard();
+            //Second player's pieces postion - top player
+            initPlayerPiecesPosition(0, m_GameBoardSize / 2 - 1, m_GameBoardSize, ePieceValue.X);
+
+            drawBoard();
         }
 
 		private void drawBoard()
 		{
 			string columnBoardValue;
 			string rowBoardValue;
-			dictPieces dict = new dictPieces();
 
 			string boardred = new string('=', 5 * BoardSize + BoardSize + 1);
+
 			for (int i = 0; i < BoardSize; i++)
 			{
-				dict.dictCol.TryGetValue(i, out columnBoardValue);
+                m_dictPieces.dictCol.TryGetValue(i, out columnBoardValue);
 				Console.Write("    " + columnBoardValue + " ");
 			}
+
 			Console.WriteLine();
 			Console.WriteLine(boardred);
 
 			for (int i = 0; i < BoardSize; i++)
 			{
-				dict.dictRow.TryGetValue(i, out rowBoardValue);
+                m_dictPieces.dictRow.TryGetValue(i, out rowBoardValue);
                 Console.Write(rowBoardValue + "|");
 
 				for (int j = 0; j < BoardSize; j++)
