@@ -59,14 +59,14 @@ namespace B18_Gregory_317612950_Mariya_321373136
             {
                 if (i % 2 == 0)
                 {
-                    for (int j = 0; j < m_GameBoardSize; j += 2)
+                    for (int j = 1; j < m_GameBoardSize; j += 2)
                     {
                         m_GameBoard[i, j].PieceValue = ePieceValue.O;
                     }
                 }
                 else
                 {
-                    for (int j = 1; j < m_GameBoardSize; j += 2)
+                    for (int j = 0; j < m_GameBoardSize; j += 2)
                     {
                         m_GameBoard[i, j].PieceValue = ePieceValue.O;
                     }
