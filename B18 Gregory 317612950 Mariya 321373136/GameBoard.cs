@@ -23,26 +23,25 @@ namespace B18_Gregory_317612950_Mariya_321373136
 			get { return m_GameBoardSize; }
 		}
 
-		public void InitializeNewGameBoard()
-		{
-			m_GameBoard = new Piece[m_GameBoardSize, m_GameBoardSize];
-
-			for (int i = 0; i < m_GameBoardSize; i++)
-			{
-				for (int j = 0; j < m_GameBoardSize; j++)
-				{
-					m_GameBoard[i, j] = new Piece(i, j);
-				}
-			}
-
-
-        
-            //enemy
-            for(int i = 0; i < m_GameBoardSize/2 ; i++)
+        private void initiateBoardPieces()
+        {
+            for (int i = 0; i < m_GameBoardSize; i++)
             {
-                if( i % 2 == 0 )
+                for (int j = 0; j < m_GameBoardSize; j++)
                 {
-                    for( int j = 1; j < m_GameBoardSize; j += 2 )
+                    m_GameBoard[i, j] = new Piece(i, j);
+                }
+            }
+        }
+
+        private void initiateFirstPlayerPieces()
+        {
+            //enemy
+            for (int i = 0; i < m_GameBoardSize / 2; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    for (int j = 1; j < m_GameBoardSize; j += 2)
                     {
                         m_GameBoard[i, j].PieceValue = ePieceValue.X;
                     }
@@ -55,8 +54,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     }
                 }
             }
+        }
 
-
+        private void initiateSecondPlayerPieces()
+        {
             //first player
             for (int i = m_GameBoardSize - 1; i > m_GameBoardSize / 2; i--)
             {
@@ -75,6 +76,15 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     }
                 }
             }
+        }
+
+        public void InitializeNewGameBoard()
+		{
+			m_GameBoard = new Piece[m_GameBoardSize, m_GameBoardSize];
+
+            initiateBoardPieces();
+            initiateFirstPlayerPieces();
+            initiateSecondPlayerPieces();
 
         }
 
