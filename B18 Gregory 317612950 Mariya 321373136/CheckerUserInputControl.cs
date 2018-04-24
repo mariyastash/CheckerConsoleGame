@@ -6,11 +6,11 @@ namespace B18_Gregory_317612950_Mariya_321373136
 {
 	class CheckerUserInputControl
 	{
-		//Members:
+		////Members:
 		private CheckerLogicalControl m_LogicalControl;
 		private const string k_Quit = "Q";
 
-		//Methods:
+		////Methods:
 		public CheckerUserInputControl()
 		{
 			welcomeMessage();
@@ -123,7 +123,7 @@ Against Human: enter 2."
 
 		private void startToPlay()
 		{
-			//TODO
+			////TODO
 		}
 	}
 }
