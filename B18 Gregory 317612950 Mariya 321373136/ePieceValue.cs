@@ -8,8 +8,8 @@ namespace B18_Gregory_317612950_Mariya_321373136
 	{
 		Empty,
 		X,
-		U, //O - queen
+		U, ////O - queen
 		O,
-		K, //X - queen
+		K, ////X - queen
 	}
 }
