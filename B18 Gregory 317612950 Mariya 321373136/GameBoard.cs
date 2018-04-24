@@ -34,11 +34,9 @@ namespace B18_Gregory_317612950_Mariya_321373136
 					m_GameBoard[i, j] = new Piece(i, j);
 				}
 			}
-
-
         
             //enemy
-            for(int i = 0; i < m_GameBoardSize/2 ; i++)
+            for(int i = 0; i < m_GameBoardSize/2 -1; i++)
             {
                 if( i % 2 == 0 )
                 {
@@ -55,7 +53,6 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     }
                 }
             }
-
 
             //first player
             for (int i = m_GameBoardSize - 1; i > m_GameBoardSize / 2; i--)
@@ -75,8 +72,37 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     }
                 }
             }
-
+			drawBoard();
         }
+
+		private void drawBoard()
+		{
+			string columnBoardValue;
+			string rowBoardValue;
+			dictPieces dict = new dictPieces();
+
+			string boardred = new string('=', 5 * BoardSize + BoardSize + 1);
+			for (int i = 0; i < BoardSize; i++)
+			{
+				dict.dictCol.TryGetValue(i, out columnBoardValue);
+				Console.Write("    " + columnBoardValue + " ");
+			}
+			Console.WriteLine();
+			Console.WriteLine(boardred);
+
+			for (int i = 0; i < BoardSize; i++)
+			{
+				dict.dictRow.TryGetValue(i, out rowBoardValue);
+                Console.Write(rowBoardValue + "|");
+
+				for (int j = 0; j < BoardSize; j++)
+				{
+					Console.Write(m_GameBoard[i, j].PieceValue == ePieceValue.Empty ? "     " + "|" : "  " + m_GameBoard[i, j].PieceValue.ToString() + "  |");
+				}
+
+				Console.WriteLine("\n" + boardred);
+			}
+		}
 
         public Piece[,] GameBoardPieces
         {
