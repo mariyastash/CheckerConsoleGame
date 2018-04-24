@@ -34,6 +34,9 @@
   <ItemGroup>
     <Compile Include="CheckerLogicalControl.cs" />
     <Compile Include="CheckerUserInputControl.cs" />
+    <Compile Include="ePieceCol.cs" />
+    <Compile Include="dictPieces.cs" />
+    <Compile Include="ePieceRow.cs" />
     <Compile Include="ePieceValue.cs" />
     <Compile Include="ePlayerEnemy.cs" />
     <Compile Include="GameBoard.cs" />

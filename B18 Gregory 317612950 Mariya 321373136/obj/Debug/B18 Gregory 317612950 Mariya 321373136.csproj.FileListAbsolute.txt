@@ -4,3 +4,10 @@ C:\Users\Mariya\Desktop\שנה ג סמסטר ב\C#\B18 Gregory 317612950 Mariya 
 C:\Users\Mariya\Desktop\שנה ג סמסטר ב\C#\B18 Gregory 317612950 Mariya 321373136\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.exe
 C:\Users\Mariya\Desktop\שנה ג סמסטר ב\C#\B18 Gregory 317612950 Mariya 321373136\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.pdb
 C:\Users\Mariya\Desktop\שנה ג סמסטר ב\C#\B18 Gregory 317612950 Mariya 321373136\B18 Gregory 317612950 Mariya 321373136\bin\Debug\Ex02.ConsoleUtils.dll
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\bin\Debug\B18 Gregory 317612950 Mariya 321373136.exe
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\bin\Debug\B18 Gregory 317612950 Mariya 321373136.pdb
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.csprojResolveAssemblyReference.cache
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.csproj.CoreCompileInputs.cache
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.csproj.CopyComplete
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.exe
+C:\Users\grisha\Source\Repos\CheckerConsoleGame\B18 Gregory 317612950 Mariya 321373136\obj\Debug\B18 Gregory 317612950 Mariya 321373136.pdb
