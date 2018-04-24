@@ -6,14 +6,14 @@ namespace B18_Gregory_317612950_Mariya_321373136
 {
     class CheckerLogicalControl
     {
-        //Members:
+        ////Members:
         private GameBoard m_GameBoard;
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private ePlayerEnemy m_PlayerEnemy;
         private Player m_currentPlayer = null;
 
-        //Methods:
+        ////Methods:
         public CheckerLogicalControl(Player i_FirstPlayer, Player i_SecondPlayer, int i_GameBoardSize, ePlayerEnemy i_Enemy)
         {
             m_FirstPlayer = new Player(i_FirstPlayer.Name, ePieceValue.X);
@@ -24,13 +24,13 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
         private bool isValidMove()
         {
-            // TODO
+            //// TODO
             return true;
         }
 
         public void Move(String i_From, String i_To)
         {
-            //TODO
+            ////TODO
         }
 
         public Player CurrentPlayer 
@@ -56,7 +56,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
             {
                 if( obj.PieceValue == i_PieceValue)
                 {
-                    //TODO;
+                    ////TODO;
                 }
             }
 
