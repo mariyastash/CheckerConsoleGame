@@ -9,9 +9,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
 		////Members:
 		private CheckerLogicalControl m_LogicalControl;
 		private const string k_Quit = "Q";
+        Player firstPlayer, secondPlayer;
 
-		////Methods:
-		public CheckerUserInputControl()
+        ////Methods:
+        public CheckerUserInputControl()
 		{
 			welcomeMessage();
 			defineGameSettings();
@@ -33,13 +34,13 @@ GOOD LUCK!"
 
 		private void defineGameSettings()
 		{
-			Player fisrtPlayer, secondPlayer;
+			//Player firstPlayer, secondPlayer;
 			int gameBoardSize = getGameBoardSizeInput();
 
 			ePlayerEnemy enemy = getPlayerChoiceEnemy();
-			getPlayerInput(out fisrtPlayer, out secondPlayer, enemy);
+			getPlayerInput(out firstPlayer, out secondPlayer, enemy);
 
-			m_LogicalControl = new CheckerLogicalControl(fisrtPlayer, secondPlayer, gameBoardSize, enemy);
+			m_LogicalControl = new CheckerLogicalControl(firstPlayer, secondPlayer, gameBoardSize, enemy);
         }
 
 		private void getPlayerInput(out Player o_FisrtPlayer, out Player o_SecondPlayer, ePlayerEnemy i_Enemy)
@@ -121,9 +122,22 @@ Against Human: enter 2."
 			return choicenEnemy;
 		}
 
+
 		private void startToPlay()
 		{
-			////TODO
-		}
+
+            string playerTurn;
+            string fromMove;
+            string toMove;
+
+            Console.WriteLine("{0} turn:", firstPlayer.Name);
+            playerTurn = Console.ReadLine();
+
+            fromMove = playerTurn.Substring(0, 2);
+            toMove = playerTurn.Substring(3, 2);
+
+            m_LogicalControl.Move(fromMove, toMove);
+
+        }
 	}
 }

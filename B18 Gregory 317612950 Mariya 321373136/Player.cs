@@ -31,8 +31,8 @@ namespace B18_Gregory_317612950_Mariya_321373136
 			set { m_score++; }
 		}
 
-		public ePieceValue Piece
-		{
+		public ePieceValue PieceValue
+        {
 			get { return m_Piece; }
 			set { m_Piece = value; }
 		}

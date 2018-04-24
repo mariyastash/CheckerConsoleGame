@@ -26,7 +26,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
         public Piece(int i_row, int i_col)
         {
             m_RowIndex = i_row;
-            m_RowIndex = i_col;
+            m_ColIndex = i_col;
             m_PieceValue = ePieceValue.Empty;
             m_dictPieces = new dictPieces();
             m_dictPieces.dictRow.TryGetValue(i_row, out m_RowString);

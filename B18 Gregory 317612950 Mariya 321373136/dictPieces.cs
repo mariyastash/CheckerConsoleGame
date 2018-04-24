@@ -32,5 +32,20 @@ namespace B18_Gregory_317612950_Mariya_321373136
 			{8, "I" },
 			{9, "J" }
 		};
+
+        public int GetKeyByValue(string i_Value, Dictionary<int, string> i_Dictionary)
+        {
+            int returnKey = -1; ;
+
+            foreach(KeyValuePair<int, string> pair in i_Dictionary)
+            {
+                if( pair.Value == i_Value )
+                {
+                    returnKey = pair.Key;
+                }
+            }
+
+            return returnKey;
+        }
     }
 }

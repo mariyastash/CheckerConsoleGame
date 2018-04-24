@@ -74,10 +74,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
             //Second player's pieces postion - top player
             initPlayerPiecesPosition(0, m_GameBoardSize / 2 - 1, m_GameBoardSize, ePieceValue.X);
 
-            drawBoard();
+            DrawBoard();
         }
 
-		private void drawBoard()
+		public void DrawBoard()
 		{
 			string columnBoardValue;
 			string rowBoardValue;
@@ -107,11 +107,30 @@ namespace B18_Gregory_317612950_Mariya_321373136
 			}
 		}
 
+        public Piece GetGameBoardPiece(string i_Coordinate)
+        {
+            Piece returnPiece = null;
+
+            if (i_Coordinate.Length == 2)
+            {
+                int row = m_dictPieces.GetKeyByValue(i_Coordinate[0].ToString(), m_dictPieces.dictRow);
+                int col = m_dictPieces.GetKeyByValue(i_Coordinate[1].ToString(), m_dictPieces.dictCol);
+
+                returnPiece = m_GameBoard[row, col];
+            }
+
+            return returnPiece;
+        }
+
         public Piece[,] GameBoardPieces
         {
             get
             {
                 return m_GameBoard;
+            }
+            set
+            {
+                m_GameBoard = value;
             }
         }
 	}
