@@ -14,6 +14,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
         private Player m_CurrentPlayer = null;
         private Player m_EnemyPlayer = null;
         private Piece[,] m_CurrentBoard;
+        private bool m_GameOver = false;
         private List<Piece> m_MustToAttackList;
 
         ////Methods:
@@ -34,25 +35,54 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
         private bool isValidMove(Piece i_From, Piece i_To)
         {
-            bool returnValue = false;
+            bool returnValue = true;
             bool isCurrentPlayerPiece = m_CurrentPlayer.PieceValue == i_From.PieceValue;
             bool isAttack = m_MustToAttackList.Contains(i_From);
             bool isToCoordinateEmpty = i_To.PieceValue.Equals(ePieceValue.Empty);
+            bool isQueen = i_From.PieceValue.Equals(ePieceValue.U) || i_From.PieceValue.Equals(ePieceValue.K);
 
-            if (m_MustToAttackList.Count > 0)
+            if (isCurrentPlayerPiece && isToCoordinateEmpty)
             {
-                if(isAttack)
+                if (m_MustToAttackList.Count > 0)
                 {
-                    if (m_CurrentPlayer.Equals(m_FirstPlayer))
+                    if (isAttack)
                     {
-                        returnValue = i_To.Row == i_From.Row - 2 && (i_To.Col == i_From.Col + 2 || i_To.Col == i_From.Col - 2);
+                        Piece underAttack = getUnderAttackPiece(i_From, i_To);
+                        returnValue = isValidJumpByStep(i_To, i_From, 2) && underAttack.PieceValue.Equals(m_EnemyPlayer.PieceValue);
                     }
+                    else
+                    {
+                        returnValue = !returnValue;
+                    };
                 }
+                else
+                {
+                    returnValue = isValidJumpByStep(i_To, i_From, 1);
+                }
+
+            }
+            else
+            {
+                returnValue = !returnValue;
             }
 
-            if(isCurrentPlayerPiece && isToCoordinateEmpty)
+            return returnValue;
+        }
+
+        private bool isValidJumpByStep(Piece i_To, Piece i_From, int steps)
+        {
+            bool returnValue = true;
+            bool isColValid = i_To.Col == i_From.Col + steps || i_To.Col == i_From.Col - steps;
+
+            //bottom player
+            if (m_CurrentPlayer.Equals(m_FirstPlayer))
             {
-                returnValue = true;
+                returnValue = i_To.Row == i_From.Row - steps && isColValid;
+            }
+            //top player
+            else if (m_CurrentPlayer.Equals(m_SecondPlayer))
+            {
+                returnValue = i_To.Row == i_From.Row + steps && isColValid;
             }
 
             return returnValue;
@@ -62,8 +92,9 @@ namespace B18_Gregory_317612950_Mariya_321373136
         {
             Piece fromPiece = m_GameBoard.GetGameBoardPiece(i_From);
             Piece toPiece = m_GameBoard.GetGameBoardPiece(i_To);
+            string errorMsg = null;
 
-            setMustToAttackList();
+            m_MustToAttackList = setMustToAttackList();
 
             if (isValidMove(fromPiece, toPiece))
             {
@@ -75,14 +106,74 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 m_CurrentBoard[toRow, toCol].PieceValue = fromPiece.PieceValue;
                 m_CurrentBoard[fromRow, fromCol].PieceValue = ePieceValue.Empty;
 
-                m_GameBoard.GameBoardPieces = m_CurrentBoard;
+                if (m_MustToAttackList.Count > 0)
+                {
+                    Piece pieceUnderAttack = getUnderAttackPiece(fromPiece, toPiece);
+                    m_CurrentBoard[pieceUnderAttack.Row, pieceUnderAttack.Col].PieceValue = ePieceValue.Empty;
+                    m_CurrentPlayer.Score++;
+                }
+                else
+                {
+                    SwitchPlayer();
+                }
 
-                m_GameBoard.DrawBoard();
+                m_GameBoard.GameBoardPieces = m_CurrentBoard;
             }
             else {
-              //TODO Handle ERROR
+                errorMsg = "Invalid Move!";
             }
-            ////TODO
+
+            m_GameBoard.DrawBoard();
+
+            if (errorMsg != null)
+            {
+                throw new Exception(errorMsg);
+            }
+        }
+
+        public bool GameOver
+        {
+            get
+            {
+                return m_GameOver;
+            }
+        }
+        public void SwitchPlayer()
+        {
+            Player tempPlayer = m_CurrentPlayer;
+            m_CurrentPlayer = m_EnemyPlayer;
+            m_EnemyPlayer = tempPlayer; 
+        }
+
+        private Piece getUnderAttackPiece(Piece i_FromPiece, Piece i_ToPiece)
+        {
+            Piece returnPiece;
+
+            if (i_ToPiece.Col > i_FromPiece.Col)
+            {
+                if(i_ToPiece.Row > i_FromPiece.Row)
+                {
+                    returnPiece = m_CurrentBoard[i_FromPiece.Row + 1, i_FromPiece.Col + 1];
+                }
+                else
+                {
+                    returnPiece = m_CurrentBoard[i_FromPiece.Row - 1, i_FromPiece.Col + 1];
+                }
+
+            }
+            else
+            {
+                if (i_ToPiece.Row > i_FromPiece.Row)
+                {
+                    returnPiece = m_CurrentBoard[i_FromPiece.Row + 1, i_FromPiece.Col - 1];
+                }
+                else
+                {
+                    returnPiece = m_CurrentBoard[i_FromPiece.Row - 1, i_FromPiece.Col - 1];
+                }
+            }
+
+            return returnPiece;
         }
 
         public Player CurrentPlayer 
@@ -109,10 +200,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
             }
         }
 
-        private void setMustToAttackList()
+        private List<Piece> setMustToAttackList()
         {
             // TODO REFACTRORING
-            m_MustToAttackList = new List<Piece>();
+            List<Piece> mustToAttackList = new List<Piece>();
 
             foreach(Piece obj in m_CurrentBoard)
             {
@@ -160,6 +251,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 }
             }
 
+            return mustToAttackList;
         }
 
         private bool isPieceValue(int i_Row, int i_Col, ePieceValue i_PieceValue)

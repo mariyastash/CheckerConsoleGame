@@ -116,7 +116,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 int row = m_dictPieces.GetKeyByValue(i_Coordinate[0].ToString(), m_dictPieces.dictRow);
                 int col = m_dictPieces.GetKeyByValue(i_Coordinate[1].ToString(), m_dictPieces.dictCol);
 
-                returnPiece = m_GameBoard[row, col];
+                if (row >= 0 && row < BoardSize && col >= 0 && col < BoardSize)
+                {
+                    returnPiece = m_GameBoard[row, col];
+                }
             }
 
             return returnPiece;
