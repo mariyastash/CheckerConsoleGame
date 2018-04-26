@@ -20,22 +20,22 @@ namespace B18_Gregory_317612950_Mariya_321373136
             startToPlay();
         }
 
-        private void welcomeMessage()
-        {
-            string msg = string.Format(
+		private void welcomeMessage()
+		{
+			string msg = string.Format(
 @"Welcome to CHECKER GAME!
 Checker is a strategy board games for two players
 which involve diagonal moves of X / O game pieces
 and mandatory captures by jumping over opponent pieces.
-GOOD LUCK!"
-                );
-            Console.WriteLine(msg);
-            Console.WriteLine();
-        }
+GOOD LUCK!");
+
+			Console.WriteLine(msg);
+			Console.WriteLine();
+		}
 
         private void defineGameSettings()
         {
-            //Player firstPlayer, secondPlayer;
+            ////Player firstPlayer, secondPlayer;
             int gameBoardSize = getGameBoardSizeInput();
 
             ePlayerEnemy enemy = getPlayerChoiceEnemy();

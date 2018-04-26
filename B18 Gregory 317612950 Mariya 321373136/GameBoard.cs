@@ -68,10 +68,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
             initBoardPiecePosition();
 
-            //First player's pieces postion - bottom player
+            ////First player's pieces postion - bottom player
             initPlayerPiecesPosition(m_GameBoardSize / 2 + 1, m_GameBoardSize, m_GameBoardSize, ePieceValue.O);
 
-            //Second player's pieces postion - top player
+            ////Second player's pieces postion - top player
             initPlayerPiecesPosition(0, m_GameBoardSize / 2 - 1, m_GameBoardSize, ePieceValue.X);
 
             DrawBoard();

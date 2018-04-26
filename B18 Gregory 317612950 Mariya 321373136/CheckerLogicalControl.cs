@@ -74,12 +74,12 @@ namespace B18_Gregory_317612950_Mariya_321373136
             bool returnValue = true;
             bool isColValid = i_To.Col == i_From.Col + steps || i_To.Col == i_From.Col - steps;
 
-            //bottom player
+            ////bottom player
             if (m_CurrentPlayer.Equals(m_FirstPlayer))
             {
                 returnValue = i_To.Row == i_From.Row - steps && isColValid;
             }
-            //top player
+            ////top player
             else if (m_CurrentPlayer.Equals(m_SecondPlayer))
             {
                 returnValue = i_To.Row == i_From.Row + steps && isColValid;
@@ -152,14 +152,14 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
             if (i_ToPiece.Col > i_FromPiece.Col)
             {
-                if(i_ToPiece.Row > i_FromPiece.Row)
-                {
-                    returnPiece = m_CurrentBoard[i_FromPiece.Row + 1, i_FromPiece.Col + 1];
-                }
-                else
-                {
-                    returnPiece = m_CurrentBoard[i_FromPiece.Row - 1, i_FromPiece.Col + 1];
-                }
+				if (i_ToPiece.Row > i_FromPiece.Row)
+				{
+					returnPiece = m_CurrentBoard[i_FromPiece.Row + 1, i_FromPiece.Col + 1];
+				}
+				else
+				{
+					returnPiece = m_CurrentBoard[i_FromPiece.Row - 1, i_FromPiece.Col + 1];
+				}
 
             }
             else
@@ -206,51 +206,51 @@ namespace B18_Gregory_317612950_Mariya_321373136
 			// TODO REFACTRORING
 			m_MustToAttackList = new List<Piece>();
 
-            foreach(Piece obj in m_CurrentBoard)
-            {
-                // check if piece value belongs to current player
-                if ( obj.PieceValue == m_CurrentPlayer.PieceValue)
-                {
-                    // check if current player is a bottom player 
-                    if (m_CurrentPlayer.Equals(m_FirstPlayer))
-                    {
-                      
-                        bool topLeftIsEnemy = isPieceValue(obj.Row - 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
-                        bool topTopLeftIsEmpty = isPieceValue(obj.Row - 2, obj.Col - 2, ePieceValue.Empty);
-                        bool topRightIsEnemy = isPieceValue(obj.Row - 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
-                        bool topTopRightIsEmpty = isPieceValue(obj.Row - 2, obj.Col + 2, ePieceValue.Empty);
+			foreach (Piece obj in m_CurrentBoard)
+			{
+				// check if piece value belongs to current player
+				if (obj.PieceValue == m_CurrentPlayer.PieceValue)
+				{
+					// check if current player is a bottom player 
+					if (m_CurrentPlayer.Equals(m_FirstPlayer))
+					{
 
-                        if (topLeftIsEnemy && topTopLeftIsEmpty)
-                        {
-                            m_MustToAttackList.Add(obj);
-                        }
-                        else if (topRightIsEnemy && topTopRightIsEmpty)
-                        {
-                            m_MustToAttackList.Add(obj);
-                        }
-                    }
-                    // current player is top player
-                    else
-                    {
+						bool topLeftIsEnemy = isPieceValue(obj.Row - 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
+						bool topTopLeftIsEmpty = isPieceValue(obj.Row - 2, obj.Col - 2, ePieceValue.Empty);
+						bool topRightIsEnemy = isPieceValue(obj.Row - 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
+						bool topTopRightIsEmpty = isPieceValue(obj.Row - 2, obj.Col + 2, ePieceValue.Empty);
 
-                        bool bottomLeftIsEnemy = isPieceValue(obj.Row + 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
-                        bool bottomBottomLeftIsEmpty = isPieceValue(obj.Row + 2, obj.Col - 2, ePieceValue.Empty);
-                        bool bottomRightIsEnemy = isPieceValue(obj.Row + 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
-                        bool bottomBottompRightIsEmpty = isPieceValue(obj.Row + 2, obj.Col + 2, ePieceValue.Empty);
+						if (topLeftIsEnemy && topTopLeftIsEmpty)
+						{
+							m_MustToAttackList.Add(obj);
+						}
+						else if (topRightIsEnemy && topTopRightIsEmpty)
+						{
+							m_MustToAttackList.Add(obj);
+						}
+					}
+					// current player is top player
+					else
+					{
 
-                        if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
-                        {
-                            m_MustToAttackList.Add(obj);
-                        }
-                        else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
-                        {
-                            m_MustToAttackList.Add(obj);
-                        }
+						bool bottomLeftIsEnemy = isPieceValue(obj.Row + 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
+						bool bottomBottomLeftIsEmpty = isPieceValue(obj.Row + 2, obj.Col - 2, ePieceValue.Empty);
+						bool bottomRightIsEnemy = isPieceValue(obj.Row + 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
+						bool bottomBottompRightIsEmpty = isPieceValue(obj.Row + 2, obj.Col + 2, ePieceValue.Empty);
 
-                    }
-                    ////TODO check queen;
-                }
-            }
+						if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
+						{
+							m_MustToAttackList.Add(obj);
+						}
+						else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
+						{
+							m_MustToAttackList.Add(obj);
+						}
+
+					}
+					////TODO check queen;
+				}
+			}
         }
 
         private bool isPieceValue(int i_Row, int i_Col, ePieceValue i_PieceValue)
