@@ -135,7 +135,13 @@ namespace B18_Gregory_317612950_Mariya_321373136
         {
             get
             {
-                return m_GameOver;
+				const bool v_IsGameOver = true;
+				foreach (Piece obj in m_CurrentBoard)
+				{
+					if (obj.PieceValue == EnemyPlayer.PieceValue)
+						return !v_IsGameOver;
+				}
+				return v_IsGameOver;
             }
         }
 
