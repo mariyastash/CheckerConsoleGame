@@ -94,7 +94,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
             Piece toPiece = m_GameBoard.GetGameBoardPiece(i_To);
             string errorMsg = null;
 
-            m_MustToAttackList = setMustToAttackList();
+			setMustToAttackList();
 
             if (isValidMove(fromPiece, toPiece))
             {
@@ -138,6 +138,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 return m_GameOver;
             }
         }
+
         public void SwitchPlayer()
         {
             Player tempPlayer = m_CurrentPlayer;
@@ -200,10 +201,10 @@ namespace B18_Gregory_317612950_Mariya_321373136
             }
         }
 
-        private List<Piece> setMustToAttackList()
+        private void setMustToAttackList()
         {
-            // TODO REFACTRORING
-            List<Piece> mustToAttackList = new List<Piece>();
+			// TODO REFACTRORING
+			m_MustToAttackList = new List<Piece>();
 
             foreach(Piece obj in m_CurrentBoard)
             {
@@ -250,8 +251,6 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     ////TODO check queen;
                 }
             }
-
-            return mustToAttackList;
         }
 
         private bool isPieceValue(int i_Row, int i_Col, ePieceValue i_PieceValue)
