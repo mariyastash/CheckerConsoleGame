@@ -50,5 +50,21 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 return m_RowIndex;
             }
         }
+
+        public string ColString
+        {
+            get
+            {
+                return m_ColString;
+            }
+        }
+
+        public string RowString
+        {
+            get
+            {
+                return m_RowString;
+            }
+        }
     }
 }

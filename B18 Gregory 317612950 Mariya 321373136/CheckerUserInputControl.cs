@@ -11,6 +11,8 @@ namespace B18_Gregory_317612950_Mariya_321373136
         private CheckerLogicalControl m_LogicalControl;
         private const string k_Quit = "Q";
         Player firstPlayer, secondPlayer;
+        int gameBoardSize;
+        ePlayerEnemy enemy;
 
         ////Methods:
         public CheckerUserInputControl()
@@ -36,9 +38,9 @@ GOOD LUCK!");
         private void defineGameSettings()
         {
             ////Player firstPlayer, secondPlayer;
-            int gameBoardSize = getGameBoardSizeInput();
+            gameBoardSize = getGameBoardSizeInput();
 
-            ePlayerEnemy enemy = getPlayerChoiceEnemy();
+            enemy = getPlayerChoiceEnemy();
             getPlayerInput(out firstPlayer, out secondPlayer, enemy);
 
             m_LogicalControl = new CheckerLogicalControl(firstPlayer, secondPlayer, gameBoardSize, enemy);
@@ -50,7 +52,7 @@ GOOD LUCK!");
             Console.WriteLine("Please enter your Name:");
             playerName = Console.ReadLine();
 
-            o_FisrtPlayer = new Player(playerName, ePieceValue.O);
+            o_FisrtPlayer = new Player(playerName, ePieceValue.O, ePieceValue.K);
 
             if (i_Enemy.Equals(ePlayerEnemy.AgainstAnotherPlayer))
             {
@@ -62,7 +64,7 @@ GOOD LUCK!");
                 playerName = "Computer";
             }
 
-            o_SecondPlayer = new Player(playerName, ePieceValue.X);
+            o_SecondPlayer = new Player(playerName, ePieceValue.X, ePieceValue.U);
         }
 
         private int getGameBoardSizeInput()
@@ -123,39 +125,96 @@ Against Human: enter 2."
             return choicenEnemy;
         }
 
+        private void rematchSuggestion()
+        {
+            string userChoice;
+            string msg = string.Format(
+@"================================================
+===============   GAME OVER ====================
 
+FIRST PLAYER: {0}           SECOND PLAYER: {1}
+
+Select option:
+1. Rematch
+2. Choose Players
+Q. Exit", firstPlayer.Score, secondPlayer.Score);
+
+            Console.WriteLine(msg);
+            userChoice = Console.ReadLine();
+
+            switch (userChoice)
+            {
+                case "1":
+                    m_LogicalControl = new CheckerLogicalControl(firstPlayer, secondPlayer, gameBoardSize, enemy);
+                    startToPlay();
+                    break;
+                case "2":
+                    defineGameSettings();
+                    startToPlay();
+                    break;
+                case "Q":
+                default:
+                    break;
+            }
+        }
+        
         private void startToPlay()
         {
 
-            string playerTurn;
+            string playerTurn = null;
             string fromMove;
             string toMove;
+            bool gameOver = false;
 
             do
             {
                 Console.WriteLine("{0} turn:", m_LogicalControl.CurrentPlayer.Name);
-                playerTurn = Console.ReadLine();
 
-                Regex regex = new Regex(@"[a-j][A-J]>[a-j][A-J]");
-                Match match = regex.Match(playerTurn);
-
-                if (playerTurn != k_Quit && match.Success)
+                if (m_LogicalControl.ChoosenEnimy.Equals(ePlayerEnemy.AgainstTheComputer) && m_LogicalControl.CurrentPlayer.Equals(secondPlayer))
                 {
-                    fromMove = playerTurn.Substring(0, 2);
-                    toMove = playerTurn.Substring(3, 2);
-
                     try
                     {
-                        m_LogicalControl.Move(fromMove, toMove);
+                        m_LogicalControl.AutomaticMove();
                     }
                     catch (Exception error)
                     {
                         Console.WriteLine(error.Message);
                     }
                 }
-            }
-            while (!m_LogicalControl.GameOver || playerTurn != k_Quit);
+                else
+                {
+                    playerTurn = Console.ReadLine();
+                    Regex regex = new Regex(@"[a-j][A-J]>[a-j][A-J]");
+                    Match match = regex.Match(playerTurn);
 
+                    if (playerTurn != k_Quit)
+                    {
+                        if (match.Success)
+                        {
+                            fromMove = playerTurn.Substring(0, 2);
+                            toMove = playerTurn.Substring(3, 2);
+
+                            try
+                            {
+                                m_LogicalControl.Move(fromMove, toMove);
+                            }
+                            catch (Exception error)
+                            {
+                                Console.WriteLine(error.Message);
+                            }
+                        }
+                    }
+                }
+
+                if (m_LogicalControl.GameOver)
+                {
+                    break;
+                }
+
+            }
+            while (playerTurn != k_Quit);
+  
+            rematchSuggestion();
         }
     }
 }

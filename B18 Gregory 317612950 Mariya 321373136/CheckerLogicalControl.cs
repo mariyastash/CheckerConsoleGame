@@ -21,8 +21,8 @@ namespace B18_Gregory_317612950_Mariya_321373136
         public CheckerLogicalControl(Player i_FirstPlayer, Player i_SecondPlayer, int i_GameBoardSize, ePlayerEnemy i_ChoosenEnemy)
         {
 
-            m_FirstPlayer = new Player(i_FirstPlayer.Name, ePieceValue.O);
-            m_SecondPlayer = new Player(i_SecondPlayer.Name, ePieceValue.X);
+            m_FirstPlayer = i_FirstPlayer;
+            m_SecondPlayer = i_SecondPlayer;
 
             m_ChoosenEnemy = i_ChoosenEnemy; // Computer or Human
 
@@ -36,10 +36,9 @@ namespace B18_Gregory_317612950_Mariya_321373136
         private bool isValidMove(Piece i_From, Piece i_To)
         {
             bool returnValue = true;
-            bool isCurrentPlayerPiece = m_CurrentPlayer.PieceValue == i_From.PieceValue;
+            bool isCurrentPlayerPiece = m_CurrentPlayer.IsPlayerPiece(i_From);
             bool isAttack = m_MustToAttackList.Contains(i_From);
             bool isToCoordinateEmpty = i_To.PieceValue.Equals(ePieceValue.Empty);
-            bool isQueen = i_From.PieceValue.Equals(ePieceValue.U) || i_From.PieceValue.Equals(ePieceValue.K);
 
             if (isCurrentPlayerPiece && isToCoordinateEmpty)
             {
@@ -48,7 +47,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
                     if (isAttack)
                     {
                         Piece underAttack = getUnderAttackPiece(i_From, i_To);
-                        returnValue = isValidJumpByStep(i_To, i_From, 2) && underAttack.PieceValue.Equals(m_EnemyPlayer.PieceValue);
+                        returnValue = isValidJumpByStep(i_To, i_From, 2) && m_EnemyPlayer.IsPlayerPiece(underAttack);//underAttack.PieceValue.Equals(m_EnemyPlayer.PieceValue);
                     }
                     else
                     {
@@ -73,18 +72,30 @@ namespace B18_Gregory_317612950_Mariya_321373136
         {
             bool returnValue = true;
             bool isColValid = i_To.Col == i_From.Col + steps || i_To.Col == i_From.Col - steps;
+            bool isQueen = m_CurrentPlayer.QueenPieceValue.Equals(i_From.PieceValue);
 
-            ////bottom player
-            if (m_CurrentPlayer.Equals(m_FirstPlayer))
+            if (isColValid)
             {
-                returnValue = i_To.Row == i_From.Row - steps && isColValid;
-            }
-            ////top player
-            else if (m_CurrentPlayer.Equals(m_SecondPlayer))
-            {
-                returnValue = i_To.Row == i_From.Row + steps && isColValid;
-            }
+                if(isQueen)
+                {
+                    returnValue = i_To.Row == i_From.Row - steps || i_To.Row == i_From.Row + steps;
+                }
+                ////bottom player
+                else if (m_CurrentPlayer.Equals(m_FirstPlayer))
+                {
+                    returnValue = i_To.Row == i_From.Row - steps;
+                }
+                ////top player
+                else if (m_CurrentPlayer.Equals(m_SecondPlayer))
+                {
+                    returnValue = i_To.Row == i_From.Row + steps;
+                }
 
+            }
+            else
+            {
+                returnValue = !returnValue;
+            }
             return returnValue;
         }
 
@@ -92,6 +103,7 @@ namespace B18_Gregory_317612950_Mariya_321373136
         {
             Piece fromPiece = m_GameBoard.GetGameBoardPiece(i_From);
             Piece toPiece = m_GameBoard.GetGameBoardPiece(i_To);
+            bool attacked = false;
             string errorMsg = null;
 
 			setMustToAttackList();
@@ -102,22 +114,47 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 int fromCol = fromPiece.Col;
                 int toRow = toPiece.Row;
                 int toCol = toPiece.Col;
-
-                m_CurrentBoard[toRow, toCol].PieceValue = fromPiece.PieceValue;
-                m_CurrentBoard[fromRow, fromCol].PieceValue = ePieceValue.Empty;
+                
 
                 if (m_MustToAttackList.Count > 0)
                 {
                     Piece pieceUnderAttack = getUnderAttackPiece(fromPiece, toPiece);
                     m_CurrentBoard[pieceUnderAttack.Row, pieceUnderAttack.Col].PieceValue = ePieceValue.Empty;
-                    m_CurrentPlayer.Score++;
+                    attacked = true;
+                }
+
+                //Queens
+                if (toRow == m_GameBoard.BoardSize-1 && fromPiece.PieceValue.Equals(ePieceValue.X))
+                {
+                    m_CurrentBoard[toRow, toCol].PieceValue = ePieceValue.U;
+                }
+                else if(toRow == 0 && fromPiece.PieceValue.Equals(ePieceValue.O))
+                {
+                    m_CurrentBoard[toRow, toCol].PieceValue = ePieceValue.K;
                 }
                 else
+                {
+                    m_CurrentBoard[toRow, toCol].PieceValue = fromPiece.PieceValue;
+                }
+
+                m_CurrentBoard[fromRow, fromCol].PieceValue = ePieceValue.Empty;
+
+                setMustToAttackList();
+                m_GameBoard.GameBoardPieces = m_CurrentBoard;
+
+                if (attacked)
+                {
+                    if(m_MustToAttackList.Count == 0)
+                    {
+                        SwitchPlayer();
+                    }
+                }
+                else if(!isGameOver())
                 {
                     SwitchPlayer();
                 }
 
-                m_GameBoard.GameBoardPieces = m_CurrentBoard;
+                
             }
             else {
                 errorMsg = "Invalid Move!";
@@ -131,17 +168,169 @@ namespace B18_Gregory_317612950_Mariya_321373136
             }
         }
 
+        public void AutomaticMove()
+        {
+            Piece fromPiece = null;
+            Piece toPiece = null;
+
+            setMustToAttackList();
+
+            if (m_MustToAttackList.Count > 0)
+            {
+                fromPiece = m_MustToAttackList[0];
+            }
+            else
+            {
+                fromPiece = getMoveFromPiece();
+            }
+
+            if (fromPiece != null)
+            {
+                toPiece = getToPiece(fromPiece);
+                Move(fromPiece.RowString + fromPiece.ColString, toPiece.RowString + toPiece.ColString);
+            }
+        }
+
+        private Piece getToPiece(Piece i_From)
+        {
+            Piece returnPiece = null;
+            bool isAttack = m_MustToAttackList.Contains(i_From);
+            bool isQueen = i_From.PieceValue.Equals(m_CurrentPlayer.QueenPieceValue);
+
+            bool topLeftIsEnemy = isEnemyPiece(i_From.Row - 1, i_From.Col - 1);
+            bool topTopLeftIsEmpty = isPieceValue(i_From.Row - 2, i_From.Col - 2, ePieceValue.Empty);
+            bool topRightIsEnemy = isEnemyPiece(i_From.Row - 1, i_From.Col + 1);
+            bool topTopRightIsEmpty = isPieceValue(i_From.Row - 2, i_From.Col + 2, ePieceValue.Empty);
+            bool bottomLeftIsEnemy = isEnemyPiece(i_From.Row + 1, i_From.Col - 1);
+            bool bottomBottomLeftIsEmpty = isPieceValue(i_From.Row + 2, i_From.Col - 2, ePieceValue.Empty);
+            bool bottomRightIsEnemy = isEnemyPiece(i_From.Row + 1, i_From.Col + 1);
+            bool bottomBottompRightIsEmpty = isPieceValue(i_From.Row + 2, i_From.Col + 2, ePieceValue.Empty);
+
+
+            if(m_CurrentPlayer.Equals(m_SecondPlayer))
+            {
+                if (isAttack)
+                {
+                    if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
+                    {
+                        returnPiece = m_CurrentBoard[i_From.Row + 2, i_From.Col - 2];
+                    }
+                    else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
+                    {
+                        returnPiece = m_CurrentBoard[i_From.Row + 2, i_From.Col + 2];
+                    }
+                    else if(isQueen)
+                    {
+                        if (topLeftIsEnemy && topTopLeftIsEmpty)
+                        {
+                            returnPiece = m_CurrentBoard[i_From.Row - 2, i_From.Col - 2];
+                        }
+                        else if (topRightIsEnemy && topTopRightIsEmpty)
+                        {
+                            returnPiece = m_CurrentBoard[i_From.Row - 2, i_From.Col + 2];
+                        }
+                    }
+                }
+                else
+                {
+                    if (isPieceValue(i_From.Row + 1, i_From.Col + 1, ePieceValue.Empty))
+                    {
+                        returnPiece = m_CurrentBoard[i_From.Row + 1, i_From.Col + 1];
+                    }
+                    else if (isPieceValue(i_From.Row + 1, i_From.Col - 1, ePieceValue.Empty))
+                    {
+                        returnPiece = m_CurrentBoard[i_From.Row + 1, i_From.Col - 1];
+                    }
+                    else if(isQueen)
+                    {
+                        if (isPieceValue(i_From.Row - 1, i_From.Col - 1, ePieceValue.Empty))
+                        {
+                            returnPiece = m_CurrentBoard[i_From.Row - 1, i_From.Col - 1];
+                        }
+                        else if (isPieceValue(i_From.Row - 1, i_From.Col + 1, ePieceValue.Empty))
+                        {
+                            returnPiece = m_CurrentBoard[i_From.Row - 1, i_From.Col + 1];
+                        }
+                    }
+                }
+            }
+            return returnPiece;
+        }
+
+        private Piece getMoveFromPiece()
+        {
+            Piece returnPiece = null;
+
+            foreach (Piece obj in m_CurrentBoard)
+            {
+                if (m_CurrentPlayer.IsPlayerPiece(obj))
+                {
+                    if (m_CurrentPlayer.Equals(m_SecondPlayer))
+                    {
+                        if (isPieceValue(obj.Row + 1, obj.Col + 1, ePieceValue.Empty) || isPieceValue(obj.Row + 1, obj.Col - 1, ePieceValue.Empty))
+                        {
+                            returnPiece = obj;
+                        }
+                        else if(m_CurrentPlayer.QueenPieceValue.Equals(obj.PieceValue))
+                        {
+                            if (isPieceValue(obj.Row - 1, obj.Col - 1, ePieceValue.Empty) || isPieceValue(obj.Row - 1, obj.Col + 1, ePieceValue.Empty))
+                            {
+                                returnPiece = obj;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (isPieceValue(obj.Row - 1, obj.Col + 1, ePieceValue.Empty) || isPieceValue(obj.Row - 1, obj.Col - 1, ePieceValue.Empty))
+                        {
+                            returnPiece = obj;
+                        }
+                        else if (m_CurrentPlayer.QueenPieceValue.Equals(obj.PieceValue))
+                        {
+                            if (isPieceValue(obj.Row - 1, obj.Col - 1, ePieceValue.Empty) || isPieceValue(obj.Row - 1, obj.Col + 1, ePieceValue.Empty))
+                            {
+                                returnPiece = obj;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return returnPiece;
+        }
+
+        public ePlayerEnemy ChoosenEnimy
+        {
+            get
+            {
+                return m_ChoosenEnemy;
+            }
+        }
+
+        private bool isGameOver()
+        {
+            bool v_IsGameOver = true;
+            foreach (Piece obj in m_CurrentBoard)
+            {
+                if (EnemyPlayer.IsPlayerPiece(obj))
+                {
+                    v_IsGameOver = false;
+                }
+            }
+
+            if(v_IsGameOver)
+            {
+                m_GameOver = v_IsGameOver;
+                m_CurrentPlayer.Score++;
+            }
+            return v_IsGameOver;
+        }
+
         public bool GameOver
         {
             get
             {
-				const bool v_IsGameOver = true;
-				foreach (Piece obj in m_CurrentBoard)
-				{
-					if (obj.PieceValue == EnemyPlayer.PieceValue)
-						return !v_IsGameOver;
-				}
-				return v_IsGameOver;
+				return m_GameOver;
             }
         }
 
@@ -209,61 +398,94 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
         private void setMustToAttackList()
         {
-			// TODO REFACTRORING
-			m_MustToAttackList = new List<Piece>();
+            // TODO REFACTRORING
+            m_MustToAttackList = new List<Piece>();
+            bool topLeftIsEnemy = true;
+            bool topTopLeftIsEmpty = true;
+            bool topRightIsEnemy = true;
+            bool topTopRightIsEmpty = true;
+            bool bottomLeftIsEnemy = true;
+            bool bottomBottomLeftIsEmpty = true;
+            bool bottomRightIsEnemy = true;
+            bool bottomBottompRightIsEmpty = true;
 
-			foreach (Piece obj in m_CurrentBoard)
-			{
-				// check if piece value belongs to current player
-				if (obj.PieceValue == m_CurrentPlayer.PieceValue)
-				{
-					// check if current player is a bottom player 
-					if (m_CurrentPlayer.Equals(m_FirstPlayer))
-					{
+            foreach (Piece obj in m_CurrentBoard)
+            {
+                topLeftIsEnemy = isEnemyPiece(obj.Row - 1, obj.Col - 1);
+                topTopLeftIsEmpty = isPieceValue(obj.Row - 2, obj.Col - 2, ePieceValue.Empty);
+                topRightIsEnemy = isEnemyPiece(obj.Row - 1, obj.Col + 1);
+                topTopRightIsEmpty = isPieceValue(obj.Row - 2, obj.Col + 2, ePieceValue.Empty);
+                bottomLeftIsEnemy = isEnemyPiece(obj.Row + 1, obj.Col - 1);
+                bottomBottomLeftIsEmpty = isPieceValue(obj.Row + 2, obj.Col - 2, ePieceValue.Empty);
+                bottomRightIsEnemy = isEnemyPiece(obj.Row + 1, obj.Col + 1);
+                bottomBottompRightIsEmpty = isPieceValue(obj.Row + 2, obj.Col + 2, ePieceValue.Empty);
 
-						bool topLeftIsEnemy = isPieceValue(obj.Row - 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
-						bool topTopLeftIsEmpty = isPieceValue(obj.Row - 2, obj.Col - 2, ePieceValue.Empty);
-						bool topRightIsEnemy = isPieceValue(obj.Row - 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
-						bool topTopRightIsEmpty = isPieceValue(obj.Row - 2, obj.Col + 2, ePieceValue.Empty);
+                // check if piece value belongs to current player
+                if (m_CurrentPlayer.IsPlayerPiece(obj))
+                {
+                    bool isQueen = obj.PieceValue.Equals(m_CurrentPlayer.QueenPieceValue);
 
-						if (topLeftIsEnemy && topTopLeftIsEmpty)
-						{
-							m_MustToAttackList.Add(obj);
-						}
-						else if (topRightIsEnemy && topTopRightIsEmpty)
-						{
-							m_MustToAttackList.Add(obj);
-						}
-					}
-					// current player is top player
-					else
-					{
+                    // check if current player is a bottom player 
+                    if (m_CurrentPlayer.Equals(m_FirstPlayer))
+                    {
 
-						bool bottomLeftIsEnemy = isPieceValue(obj.Row + 1, obj.Col - 1, m_EnemyPlayer.PieceValue);
-						bool bottomBottomLeftIsEmpty = isPieceValue(obj.Row + 2, obj.Col - 2, ePieceValue.Empty);
-						bool bottomRightIsEnemy = isPieceValue(obj.Row + 1, obj.Col + 1, m_EnemyPlayer.PieceValue);
-						bool bottomBottompRightIsEmpty = isPieceValue(obj.Row + 2, obj.Col + 2, ePieceValue.Empty);
+                        if (topLeftIsEnemy && topTopLeftIsEmpty)
+                        {
+                            m_MustToAttackList.Add(obj);
+                        }
+                        else if (topRightIsEnemy && topTopRightIsEmpty)
+                        {
+                            m_MustToAttackList.Add(obj);
+                        }
+                        else if (isQueen)
+                        {
+                            if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
+                            {
+                                m_MustToAttackList.Add(obj);
+                            }
+                            else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
+                            {
+                                m_MustToAttackList.Add(obj);
+                            }
+                        }
+                    }
+                    // current player is top player
+                    else
+                    {
 
-						if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
-						{
-							m_MustToAttackList.Add(obj);
-						}
-						else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
-						{
-							m_MustToAttackList.Add(obj);
-						}
+                        if (bottomLeftIsEnemy && bottomBottomLeftIsEmpty)
+                        {
+                            m_MustToAttackList.Add(obj);
+                        }
+                        else if (bottomRightIsEnemy && bottomBottompRightIsEmpty)
+                        {
+                            m_MustToAttackList.Add(obj);
+                        }
+                        else if (isQueen)
+                        {
 
-					}
-					////TODO check queen;
-				}
-			}
+                            if (topLeftIsEnemy && topTopLeftIsEmpty)
+                            {
+                                m_MustToAttackList.Add(obj);
+                            }
+                            else if (topRightIsEnemy && topTopRightIsEmpty)
+                            {
+                                m_MustToAttackList.Add(obj);
+                            }
+
+                        }
+
+                    }
+                    ////TODO check queen;
+                }
+            }
         }
 
         private bool isPieceValue(int i_Row, int i_Col, ePieceValue i_PieceValue)
         {
             bool returnValue = false;
 
-            if (i_Row >= 0 && i_Col > 0 && i_Row < m_GameBoard.BoardSize && i_Col < m_GameBoard.BoardSize)
+            if (i_Row >= 0 && i_Col >= 0 && i_Row < m_GameBoard.BoardSize && i_Col < m_GameBoard.BoardSize)
             {
                 if (m_CurrentBoard[i_Row, i_Col].PieceValue.Equals(i_PieceValue))
                 {
@@ -273,5 +495,23 @@ namespace B18_Gregory_317612950_Mariya_321373136
 
             return returnValue;
         }
+
+        private bool isEnemyPiece(int i_Row, int i_Col)
+        {
+            bool returnValue = true;
+
+            if (i_Row >= 0 && i_Col >= 0 && i_Row < m_GameBoard.BoardSize && i_Col < m_GameBoard.BoardSize)
+            {
+                returnValue = m_EnemyPlayer.IsPlayerPiece(m_CurrentBoard[i_Row, i_Col]);
+            }
+            else
+            {
+                returnValue = false;
+            }
+
+            return returnValue;
+        }
+
+        
     }
 }
