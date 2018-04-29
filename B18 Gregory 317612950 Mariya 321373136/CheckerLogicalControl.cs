@@ -142,18 +142,20 @@ namespace B18_Gregory_317612950_Mariya_321373136
                 setMustToAttackList();
                 m_GameBoard.GameBoardPieces = m_CurrentBoard;
 
-                if (attacked)
+                if (!isGameOver())
                 {
-                    if(m_MustToAttackList.Count == 0)
+                    if (attacked)
+                    {
+                        if (m_MustToAttackList.Count == 0)
+                        {
+                            SwitchPlayer();
+                        }
+                    }
+                    else
                     {
                         SwitchPlayer();
                     }
                 }
-                else if(!isGameOver())
-                {
-                    SwitchPlayer();
-                }
-
                 
             }
             else {
